@@ -1,5 +1,5 @@
 from numpy import sign
-
+import cv2
 
 directions = {
     -1 : "right",
@@ -8,17 +8,37 @@ directions = {
 
 }
 
+
+
 def get_lane_center(lane):
-    if len(lane) % 2 == 0: 
-        center_lane = lane[int((len(lane))/2) -1]
+    
+    if len(lane) == 2:
+        center = (lane[0][1] + lane[1][1])/2 
+        slope = (lane[0][0] + lane[1][0])/2 
+        return (center, slope)
+    
+    return (0,0)
+
+def get_center_line(center, slope, screen_height):
+    topX = (screen_height + slope * center) / slope
+    topY = slope * topX + -1 * slope * center
+    return [0,0,center, 0, topX, topY]
+
+def draw_center(img, line):
+    temp_img = img
+    x1 = int(line[2])#USING CONVENTION FROM DETECT_LANES
+    y1 =int(line[3])
+    x2 = int(line[4])
+    y2 =int(line[5])
+    cv2.line(temp_img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    return temp_img    
+
+def recommend_direction(center, slope, screenCenter):
+    # check if midpoint is in the center of the screen if so go forward
+    if center == None or slope == None:
+        return directions[0]
+    if abs(screenCenter-center) < 200:
+        return directions[0]
     else:
-        center_lane = lane[int((len(lane) + 1)/2) - 1]
-    #print(center_lane)
-
-    center = (center_lane[0][1] + center_lane[1][1])/2 
-    slope = (center_lane[0][0] + center_lane[1][0])/2 
-    return (center, slope)
-
-def recommend_direction(center, slope):
-    # check if midpoint is in the center of the screen if so go forward 
-    return directions[sign(slope)]
+        return directions[sign(slope)]
+        
