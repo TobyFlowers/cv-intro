@@ -36,12 +36,13 @@ def draw_center(img, line):
     cv2.line(temp_img, (x1, y1), (x2, y2), (0, 255, 0), 2)
     return temp_img    
 
-def recommend_direction(center, slope, screenCenter):
+def recommend_direction(center, slope, screenCenter, lane):
     # check if midpoint is in the center of the screen if so go forward
+    
     if center == None or slope == None:
         return directions[0]
-    if abs(screenCenter-center) < 200:
-        return directions[0]
+    if center < 1000 and center > 750 and (sign(lane[0][0]) != sign(lane[1][0])):
+        return "forward"
     else:
         return directions[sign(slope)]
         
