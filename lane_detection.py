@@ -9,12 +9,14 @@ def detect_lines(img, threshold1=50, threshold2=150, apertureSize=3,minLineLengt
     
     img = cv2.GaussianBlur(img, (9, 9), 0)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert to grayscale
-    edges = cv2.Canny(gray, threshold1, threshold2, apertureSize) # detect edges
+    _,bw = cv2.threshold(gray, 140, 255, cv2.THRESH_BINARY)
+
+    edges = cv2.Canny(bw, threshold1, threshold2, apertureSize) # detect edges
     lines = cv2.HoughLinesP(
                     edges,
                     rho=1,
                     theta=np.pi/180,
-                    threshold =100,
+                    threshold =80,
                     minLineLength=minLineLength,
                     maxLineGap=maxLineGap,
             ) # detect lines
@@ -29,7 +31,7 @@ def draw_lines(img, lines, color = (0, 255,0)):
     return temp_img
 
     
-def get_slopes_intercepts(lines):
+def get_slopes_intercepts(lines, screen_height):
     slopes = []
     xints = []
     for line in lines:
@@ -42,14 +44,14 @@ def get_slopes_intercepts(lines):
             if y2 == y1:
                 xInt = None
             else:
-                xInt = ((1080-y1)/slope) + x1
+                xInt = ((screen_height-y1)/slope) + x1
 
         slope.append(slope)
         xInt.append(xInt)
 
     return (slopes, xints)
 
-def detect_lanes(lines):
+def detect_lanes(lines, screen_height):
 
     #MERGE LINES
     lanes = []
@@ -64,7 +66,7 @@ def detect_lanes(lines):
             if y2 == y1:
                 xInt = None
             else:
-                xInt = ((1080-y1)/slope) + x1
+                xInt = ((screen_height-y1)/slope) + x1
         if slope != None and xInt != None and deltaY != 0:
             lanes.append([slope, xInt, x1, y1, x2, y2])
 
