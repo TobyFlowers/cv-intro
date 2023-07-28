@@ -44,7 +44,7 @@ def get_slopes_intercepts(lines, screen_height):
             if y2 == y1:
                 xInt = None
             else:
-                xInt = ((screen_height-y1)/slope) + x1
+                xInt = (screen_height-y1 + slope*x1)/slope
 
         slope.append(slope)
         xInt.append(xInt)
@@ -66,7 +66,7 @@ def detect_lanes(lines, screen_height):
             if y2 == y1:
                 xInt = None
             else:
-                xInt = ((screen_height-y1)/slope) + x1
+                xInt = (screen_height - y1)/slope + x1
         if slope != None and xInt != None and deltaY != 0:
             lanes.append([slope, xInt, x1, y1, x2, y2])
 
