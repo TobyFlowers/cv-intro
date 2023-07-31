@@ -25,6 +25,8 @@ def detect_lines(img, threshold1=50, threshold2=150, apertureSize=3,minLineLengt
 def draw_lines(img, lines, color = (0, 255,0)):
     temp_img = img
     for line in lines:
+        if type(line) == None:
+            return img
         x1, y1, x2, y2 = line[0]
         cv2.line(temp_img, (x1, y1), (x2, y2), color, 2)
 
@@ -57,20 +59,22 @@ def detect_lanes(lines, screen_height):
     lanes = []
 
     for line in lines:
-        #print(line[0])
-        x1, y1, x2, y2 = line[0]
-        deltaY = y2 - y1
-        if x2 == x1:
-            slope = None
-            xInt = x1
-        else:
-            slope = (y2 - y1)/(x2 - x1)
-            if y2 == y1:
-                xInt = None
+        if type(line) != None:
+
+            #print(line[0])
+            x1, y1, x2, y2 = line[0]
+            deltaY = y2 - y1
+            if x2 == x1:
+                slope = None
+                xInt = x1
             else:
-                xInt = (screen_height - y1)/slope + x1
-        if slope != None and xInt != None and deltaY != 0:
-            lanes.append([slope, xInt, x1, y1, x2, y2])
+                slope = (y2 - y1)/(x2 - x1)
+                if y2 == y1:
+                    xInt = None
+                else:
+                    xInt = (screen_height - y1)/slope + x1
+            if slope != None and xInt != None and deltaY != 0:
+                lanes.append([slope, xInt, x1, y1, x2, y2])
 
     cleanedLines = []
     for line in lanes:
@@ -122,6 +126,8 @@ def draw_lanes(img, lanes):
     temp_img = img
     
     for line in lanes:
+        if type(line) == None:
+            return img
         x1 = line[2]#USING CONVENTION FROM DETECT_LANES
         y1 =line[3]
         x2 = line[4]
