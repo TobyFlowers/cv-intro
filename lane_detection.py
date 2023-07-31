@@ -9,14 +9,14 @@ def detect_lines(img, threshold1=50, threshold2=150, apertureSize=3,minLineLengt
     
     img = cv2.GaussianBlur(img, (9, 9), 0)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert to grayscale
-    _,bw = cv2.threshold(gray, 140, 255, cv2.THRESH_BINARY)
+    _,bw = cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY)
 
     edges = cv2.Canny(bw, threshold1, threshold2, apertureSize) # detect edges
     lines = cv2.HoughLinesP(
                     edges,
                     rho=1,
                     theta=np.pi/180,
-                    threshold =80,
+                    threshold =100,
                     minLineLength=minLineLength,
                     maxLineGap=maxLineGap,
             ) # detect lines
@@ -55,7 +55,9 @@ def detect_lanes(lines, screen_height):
 
     #MERGE LINES
     lanes = []
+
     for line in lines:
+        #print(line[0])
         x1, y1, x2, y2 = line[0]
         deltaY = y2 - y1
         if x2 == x1:
@@ -74,7 +76,7 @@ def detect_lanes(lines, screen_height):
     for line in lanes:
         canAdd = True
         for cleanedLine in cleanedLines:
-            if abs(cleanedLine[0] - line[0]) < 0.1:
+            if abs(cleanedLine[0] - line[0]) < 0.5:
                 canAdd = False
 
         if canAdd:
@@ -118,6 +120,7 @@ def detect_lanes(lines, screen_height):
 
 def draw_lanes(img, lanes):
     temp_img = img
+    
     for line in lanes:
         x1 = line[2]#USING CONVENTION FROM DETECT_LANES
         y1 =line[3]

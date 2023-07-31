@@ -32,7 +32,7 @@ def get_center_line(center, slope, screen_height):
     if slope == 0:
         return [0,0,0, 0, 0, 0]
     topX = (-1 * screen_height + slope * center)/slope
-    print(slope)
+    #print(slope)
     return [0,0,topX, 0, center, screen_height]
 
 def draw_center(img, line):
@@ -49,10 +49,11 @@ def recommend_direction(center, slope, screenCenter, lane, cameraWidth):
     
     if center == None or slope == None:
         return directions[1]
-    if center < 1000 and center > 750 and (sign(lane[0][0]) != sign(lane[1][0])):
+    if center < cameraWidth/2 + 50 and center > cameraWidth/2 -50 and (sign(lane[0][0]) != sign(lane[1][0])):
         return "forward"
     
     else:
         diff = screenCenter - center
-        return f"{directions[sign(slope)]} {diff * cameraWidth/110} degrees strafe {strafe[sign(diff)]}"
+        print(diff)
+        return f"{directions[sign(slope)]} {diff * 110/cameraWidth} degrees strafe {strafe[sign(diff)]}"
         
