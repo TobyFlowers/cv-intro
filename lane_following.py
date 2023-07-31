@@ -2,11 +2,19 @@ from numpy import sign
 import cv2
 
 directions = {
+    -1 : "turn right",
+    1: "turn left",
+    0 : "forward"
+
+}
+
+strafe = {
     -1 : "right",
     1: "left",
     0 : "forward"
 
 }
+
 
 
 
@@ -36,13 +44,15 @@ def draw_center(img, line):
     cv2.line(temp_img, (x1, y1), (x2, y2), (0, 255, 0), 2)
     return temp_img    
 
-def recommend_direction(center, slope, screenCenter, lane):
+def recommend_direction(center, slope, screenCenter, lane, cameraWidth):
     # check if midpoint is in the center of the screen if so go forward
     
     if center == None or slope == None:
-        return directions[0]
+        return directions[1]
     if center < 1000 and center > 750 and (sign(lane[0][0]) != sign(lane[1][0])):
         return "forward"
+    
     else:
-        return directions[sign(slope)]
+        diff = screenCenter - center
+        return f"{directions[sign(slope)]} {diff * cameraWidth/110} degrees strafe {strafe[sign(diff)]}"
         
