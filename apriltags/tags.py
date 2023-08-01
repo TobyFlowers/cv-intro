@@ -28,11 +28,9 @@ def error_relative_to_center(centers, width, height):
     ret = []
     xcenter = height/2
     ycenter = width/2
-    print(xcenter, ycenter)
     for center in centers:
         ret.append([center[0] - xcenter, ycenter - center[1] ,center[2]])
     return ret
-
 
 
 
